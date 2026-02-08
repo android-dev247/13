@@ -2,2358 +2,667 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>枫叶高防服务器 - 专业级DDoS/CC防御</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全访问验证</title>
     <style>
-        /* 基础变量和重置 */
-        :root {
-            --primary: #0066ff;
-            --secondary: #00cc88;
-            --danger: #ff4757;
-            --warning: #ffa502;
-            --dark: #0f172a;
-            --darker: #0a0f1f;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --neon-blue: #00eeff;
-            --neon-green: #00ff88;
-            --neon-purple: #9d4edd;
-            --gradient-bg: linear-gradient(135deg, #0f0c29 0%, #1a1a3a 50%, #0a0a1f 100%);
-            --card-bg: rgba(20, 25, 45, 0.85);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        html {
-            font-size: 16px;
-            scroll-behavior: smooth;
         }
         
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: var(--gradient-bg);
-            color: var(--light);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0c0c14 0%, #1a1a2e 50%, #0f172a 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow-x: hidden;
-            line-height: 1.6;
-            padding-bottom: env(safe-area-inset-bottom);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        /* 移动端优化 */
-        @media (max-width: 768px) {
-            html {
-                font-size: 14px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            html {
-                font-size: 13px;
-            }
-        }
-        
-        /* 背景动画 */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -3;
-            overflow: hidden;
-        }
-        
-        .grid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(var(--neon-blue) 1px, transparent 1px),
-                linear-gradient(90deg, var(--neon-blue) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: -20px -20px;
-            opacity: 0.03;
-            z-index: -2;
-            animation: gridMove 60s linear infinite;
-        }
-        
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(40px, 40px); }
-        }
-        
-        .particles {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        
-        .particle {
-            position: absolute;
-            background: var(--neon-blue);
-            border-radius: 50%;
-            animation: float 15s infinite linear;
-            opacity: 0.1;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(100px, 100px); }
-            50% { transform: translate(0, 200px); }
-            75% { transform: translate(-100px, 100px); }
-        }
-        
-        /* 主容器 */
-        .main-container {
+        .container {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
-            position: relative;
-        }
-        
-        /* 头部 */
-        .main-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(10, 15, 30, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 2px solid rgba(0, 238, 255, 0.2);
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 1rem;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
-        
-        .logo-icon {
-            font-size: 2rem;
-            color: var(--neon-blue);
-            animation: logoGlow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes logoGlow {
-            0% { filter: drop-shadow(0 0 5px var(--neon-blue)); }
-            100% { filter: drop-shadow(0 0 15px var(--neon-blue)); }
-        }
-        
-        .logo-text h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            line-height: 1.2;
-        }
-        
-        .logo-text p {
-            font-size: 0.7rem;
-            color: var(--gray);
-            opacity: 0.8;
-        }
-        
-        /* 用户控制按钮 */
-        .auth-buttons {
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        .auth-btn {
-            padding: 0.6rem 1.2rem;
-            background: linear-gradient(45deg, var(--primary), var(--neon-purple));
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-        
-        .guest-btn {
-            padding: 0.6rem 1.2rem;
-            background: rgba(255, 165, 2, 0.2);
-            color: var(--warning);
-            border: 1px solid var(--warning);
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-        
-        .guest-btn:hover {
-            background: var(--warning);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(255, 165, 2, 0.3);
-        }
-        
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 238, 255, 0.3);
-        }
-        
-        /* 模态框 */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 2000;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .modal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 400px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--glass-border);
-            position: relative;
-        }
-        
-        .modal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--gray);
-            font-size: 1.5rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .close-modal:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--neon-blue);
-        }
-        
-        .modal-content {
-            padding: 1.5rem;
-        }
-        
-        /* 标签页 */
-        .tabs {
-            display: flex;
-            background: var(--darker);
-            border-radius: 10px;
-            padding: 0.25rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .tab {
-            flex: 1;
-            padding: 0.75rem;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .tab.active {
-            background: linear-gradient(45deg, var(--primary), var(--neon-purple));
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
-        }
-        
-        /* 表单 */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--neon-blue);
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 0 3px rgba(0, 238, 255, 0.1);
-        }
-        
-        .input-with-icon {
-            position: relative;
-        }
-        
-        .input-icon {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray);
-            cursor: pointer;
-        }
-        
-        /* 验证码区域 */
-        .captcha-group {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-        
-        .captcha-input {
-            flex: 1;
-        }
-        
-        .captcha-img {
-            flex-shrink: 0;
-            width: 120px;
-            height: 45px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 1px solid var(--glass-border);
-        }
-        
-        .captcha-img canvas {
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* 短信验证码 */
-        .sms-group {
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        .sms-input {
-            flex: 2;
-        }
-        
-        .sms-btn {
-            flex: 1;
-            background: linear-gradient(45deg, var(--secondary), var(--neon-green));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            min-width: 100px;
-        }
-        
-        .sms-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 204, 136, 0.3);
-        }
-        
-        .sms-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        /* 人机验证 */
-        .hcaptcha-box {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1.5rem 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .hcaptcha-box:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--neon-blue);
-        }
-        
-        .hcaptcha-box.verified {
-            background: rgba(0, 204, 136, 0.1);
-            border-color: var(--secondary);
-        }
-        
-        .hcaptcha-icon {
-            font-size: 1.5rem;
-            color: var(--neon-blue);
-            margin-bottom: 0.5rem;
-        }
-        
-        .hcaptcha-box.verified .hcaptcha-icon {
-            color: var(--secondary);
-        }
-        
-        /* 提交按钮 */
-        .submit-btn {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(45deg, var(--primary), var(--neon-purple));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.4);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(-1px);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        /* 用户信息面板 */
-        .user-info {
-            display: none;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 25px;
-            border: 1px solid var(--glass-border);
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary), var(--neon-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 1.2rem;
-        }
-        
-        .user-details {
-            line-height: 1.4;
-        }
-        
-        .user-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .user-balance {
-            font-size: 0.8rem;
-            color: var(--neon-green);
-        }
-        
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(255, 71, 87, 0.1);
-            color: var(--danger);
-        }
-        
-        /* 主要内容区域 */
-        .main-content {
-            padding: 2rem 0;
-            min-height: calc(100vh - 80px);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .section-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
-            border-radius: 2px;
-        }
-        
-        /* 套餐卡片 */
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        @media (max-width: 768px) {
-            .plans-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .plan-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            border: 1px solid var(--glass-border);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .plan-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 15px 30px rgba(0, 238, 255, 0.1);
-        }
-        
-        .plan-card.featured {
-            border-color: var(--neon-green);
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
-        }
-        
-        .plan-badge {
-            position: absolute;
-            top: 15px;
-            right: -30px;
-            background: linear-gradient(45deg, var(--neon-green), var(--secondary));
-            color: white;
-            padding: 0.5rem 2.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transform: rotate(45deg);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .plan-header {
-            padding: 1.5rem;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid var(--glass-border);
-        }
-        
-        .plan-icon {
-            font-size: 2.5rem;
-            color: var(--neon-blue);
-            margin-bottom: 1rem;
-        }
-        
-        .plan-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .plan-price {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--neon-green);
-            margin: 0.5rem 0;
-        }
-        
-        .plan-duration {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .plan-features {
-            padding: 1.5rem;
-            list-style: none;
-        }
-        
-        .plan-features li {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .plan-features li:last-child {
-            border-bottom: none;
-        }
-        
-        .plan-features i {
-            color: var(--neon-green);
-            font-size: 0.9rem;
-            min-width: 20px;
-        }
-        
-        .plan-footer {
-            padding: 1.5rem;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
-        .buy-btn {
-            padding: 0.875rem 2rem;
-            background: linear-gradient(45deg, var(--primary), var(--neon-purple));
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .buy-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 102, 255, 0.3);
-        }
-        
-        /* 支付区域 */
-        .payment-section {
-            display: none;
-            background: var(--card-bg);
-            border-radius: 15px;
-            border: 1px solid var(--glass-border);
-            padding: 2rem;
-            margin-top: 2rem;
-            animation: slideUp 0.5s ease;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .payment-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        
-        @media (max-width: 768px) {
-            .payment-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .qr-container {
-            text-align: center;
-        }
-        
-        .qr-code {
-            width: 200px;
-            height: 200px;
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 1rem auto;
-            border: 2px solid var(--neon-blue);
-        }
-        
-        .qr-code img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
-        .order-details {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 1.5rem;
-        }
-        
-        .order-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        
-        .order-row:last-child {
-            border-bottom: none;
-        }
-        
-        .order-total {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neon-green);
-            margin-top: 1rem;
-        }
-        
-        .payment-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .payment-btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-confirm {
-            background: linear-gradient(45deg, var(--secondary), var(--neon-green));
-            color: white;
-        }
-        
-        .btn-cancel {
-            background: rgba(255, 71, 87, 0.1);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-        
-        .payment-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        /* 游客支付区域 */
-        .guest-payment-section {
-            display: none;
-            background: var(--card-bg);
-            border-radius: 15px;
-            border: 1px solid var(--glass-border);
-            padding: 2rem;
-            margin-top: 2rem;
-            animation: slideUp 0.5s ease;
-        }
-        
-        .guest-payment-section .guest-warning {
-            background: rgba(255, 165, 2, 0.1);
-            border: 1px solid var(--warning);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            color: var(--warning);
-        }
-        
-        .guest-payment-section .guest-warning i {
-            margin-right: 0.5rem;
-        }
-        
-        /* 页脚 */
-        .main-footer {
-            margin-top: auto;
-            padding: 2rem 0;
-            border-top: 1px solid var(--glass-border);
-            text-align: center;
-        }
-        
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        
-        .social-link {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--neon-blue);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .social-link:hover {
-            background: var(--neon-blue);
-            color: var(--dark);
-            transform: translateY(-5px);
-        }
-        
-        .copyright {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-top: 1.5rem;
-        }
-        
-        /* 响应式调整 */
-        @media (max-width: 480px) {
-            .modal {
-                width: 95%;
-                max-height: 90vh;
-                overflow-y: auto;
-            }
-            
-            .modal-content {
-                padding: 1rem;
-            }
-            
-            .captcha-group {
-                flex-direction: column;
-            }
-            
-            .captcha-img {
-                width: 100%;
-                height: 40px;
-            }
-            
-            .sms-group {
-                flex-direction: column;
-            }
-            
-            .payment-section {
-                padding: 1rem;
-            }
-            
-            .auth-buttons {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-        }
-        
-        /* 工具类 */
-        .hidden {
-            display: none !important;
-        }
-        
-        .loading {
-            position: relative;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-        
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid var(--neon-blue);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .message {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-        }
-        
-        .message-success {
-            background: rgba(0, 204, 136, 0.1);
-            border: 1px solid var(--secondary);
-            color: var(--secondary);
-        }
-        
-        .message-error {
-            background: rgba(255, 71, 87, 0.1);
-            border: 1px solid var(--danger);
-            color: var(--danger);
-        }
-        
-        .message-info {
-            background: rgba(0, 238, 255, 0.1);
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
-        }
-        
-        .message-warning {
-            background: rgba(255, 165, 2, 0.1);
-            border: 1px solid var(--warning);
-            color: var(--warning);
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- 背景元素 -->
-    <div class="bg-animation">
-        <div class="grid-bg"></div>
-        <div class="particles" id="particles"></div>
-    </div>
-    
-    <!-- 头部 -->
-    <header class="main-header">
-        <div class="main-container">
-            <div class="header-content">
-                <a href="#" class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-server"></i>
-                    </div>
-                    <div class="logo-text">
-                        <h1>枫叶高防服务器</h1>
-                        <p>专业级DDoS/CC攻击防御</p>
-                    </div>
-                </a>
-                
-                <div class="auth-buttons" id="authButtons">
-                    <button class="guest-btn" id="guestLoginBtn">
-                        <i class="fas fa-user-clock"></i>
-                        <span>游客购买</span>
-                    </button>
-                    <button class="auth-btn" id="showAuthBtn">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>登录/注册</span>
-                    </button>
-                </div>
-                
-                <div class="user-info" id="userInfo">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <div class="user-details">
-                        <div class="user-name" id="userName">未登录</div>
-                        <div class="user-balance">¥<span id="userBalance">0</span></div>
-                    </div>
-                    <button class="logout-btn" id="logoutBtn" title="退出登录">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
+    <div class="container">
+        <!-- 作者信息模块 -->
+        <div class="author-info">
+            <div class="author-content">
+                <h1 class="author-name">枫叶</h1>
+                <div class="group-info">
+                    <span class="qq-icon">🐧</span>
+                    <span class="group-number">QQ群: 1078205267</span>
                 </div>
             </div>
         </div>
-    </header>
+
+<style>
+    .author-info {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px 20px;
+        z-index: 1000;
+        background: rgba(10, 10, 20, 0.9);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-bottom: 1px solid rgba(255, 132, 0, 0.2);
+        will-change: transform;
+    }
     
-    <!-- 登录/注册模态框 -->
-    <div class="modal-overlay" id="authModal">
-        <div class="modal">
+    .author-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+    
+    .author-name {
+        color: #ff8400;
+        font-size: 24px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: color 0.8s ease;
+    }
+    
+    .author-name:hover {
+        color: #ffaa44;
+    }
+    
+    .group-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 15px;
+        background: rgba(51, 51, 51, 0.6);
+        border-radius: 20px;
+        transition: all 0.8s ease;
+    }
+    
+    .group-info:hover {
+        background: rgba(255, 132, 0, 0.2);
+    }
+    
+    .qq-icon {
+        font-size: 20px;
+    }
+    
+    .group-number {
+        color: #f5f5f5;
+        font-size: 16px;
+    }
+</style>
+
+        <!-- 密码验证模块 -->
+        <div class="password-verify">
+            <div class="verify-container">
+                <div class="verify-header">
+                    <div class="lock-icon">🔒</div>
+                    <h2 class="verify-title">安全访问验证</h2>
+                    <p class="verify-subtitle">请输入访问密码继续</p>
+                </div>
+                
+                <div class="verify-body">
+                    <div class="password-input-group">
+                        <div class="input-wrapper">
+                            <input type="password" 
+                                   id="passwordInput" 
+                                   class="password-input"
+                                   placeholder="请输入6位数字密码"
+                                   maxlength="6"
+                                   autocomplete="off"
+                                   autocorrect="off"
+                                   autocapitalize="off"
+                                   spellcheck="false">
+                            <div class="input-highlight"></div>
+                        </div>
+                        
+                        <div class="password-hint">
+                            <span class="hint-text">密码提示：</span>
+                            <span class="hint-numbers">诺宁不知道密码请进入qq群聊获取1078205267</span>
+                        </div>
+                    </div>
+                    
+                    <button id="verifyBtn" class="verify-btn">
+                        <span class="btn-text">确认验证</span>
+                        <div class="btn-effect"></div>
+                    </button>
+                    
+                    <div class="security-info">
+                        <div class="security-item">
+                            <span class="security-icon">🛡️</span>
+                            <span>安全加密传输</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="security-icon">🔐</span>
+                            <span>数据隐私保护</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="verify-footer">
+                    <p class="footer-text">© 2023 枫叶安全系统 | 仅供授权访问</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<style>
+    .password-verify {
+        margin-top: 80px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        will-change: transform;
+    }
+    
+    .verify-container {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 500px;
+        width: 100%;
+        border: 1px solid rgba(255, 132, 0, 0.15);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        position: relative;
+        overflow: hidden;
+        will-change: transform;
+    }
+    
+    .verify-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #ff8400, transparent);
+        transform: translateX(-100%);
+        animation: slideLine 3s ease-in-out infinite;
+    }
+    
+    @keyframes slideLine {
+        0% {
+            transform: translateX(-100%);
+        }
+        50% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+    }
+    
+    .verify-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .lock-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        display: inline-block;
+        animation: gentleBounce 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 10px rgba(255, 132, 0, 0.3));
+    }
+    
+    @keyframes gentleBounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+    
+    .verify-title {
+        color: #ff8400;
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .verify-subtitle {
+        color: #cccccc;
+        font-size: 16px;
+        opacity: 0.9;
+    }
+</style>
+
+<style>
+    .verify-body {
+        position: relative;
+    }
+    
+    .password-input-group {
+        margin-bottom: 30px;
+    }
+    
+    .input-wrapper {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    
+    .password-input {
+        width: 100%;
+        padding: 18px 20px;
+        font-size: 20px;
+        background: rgba(30, 30, 40, 0.8);
+        border: 2px solid rgba(255, 132, 0, 0.3);
+        border-radius: 12px;
+        color: #ffffff;
+        text-align: center;
+        letter-spacing: 8px;
+        outline: none;
+        transition: all 0.8s ease;
+        font-weight: bold;
+    }
+    
+    .password-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+        letter-spacing: normal;
+        font-size: 16px;
+        font-weight: normal;
+    }
+    
+    .password-input:focus {
+        border-color: #ff8400;
+        background: rgba(255, 132, 0, 0.05);
+        box-shadow: 0 0 20px rgba(255, 132, 0, 0.2);
+    }
+    
+    .input-highlight {
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #ff8400;
+        transition: all 0.8s ease;
+        transform: translateX(-50%);
+    }
+    
+    .password-input:focus ~ .input-highlight {
+        width: 100%;
+    }
+    
+    .password-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px;
+        background: rgba(255, 132, 0, 0.08);
+        border-radius: 8px;
+        transition: all 0.8s ease;
+    }
+    
+    .password-hint:hover {
+        background: rgba(255, 132, 0, 0.15);
+    }
+    
+    .hint-text {
+        color: #cccccc;
+        font-size: 15px;
+    }
+    
+    .hint-numbers {
+        color: #ff8400;
+        font-size: 18px;
+        font-weight: bold;
+        letter-spacing: 4px;
+    }
+</style>
+
+<style>
+    .verify-btn {
+        position: relative;
+        width: 100%;
+        padding: 20px;
+        background: linear-gradient(135deg, #ff8400 0%, #e67600 100%);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        overflow: hidden;
+        margin: 25px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.8s ease;
+        will-change: transform;
+    }
+    
+    .verify-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(255, 132, 0, 0.3);
+        background: linear-gradient(135deg, #ff9400 0%, #ff8400 100%);
+    }
+    
+    .verify-btn:active {
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    .btn-text {
+        position: relative;
+        z-index: 2;
+        transition: all 0.8s ease;
+    }
+    
+    .btn-effect {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: all 0.8s ease;
+        opacity: 0;
+    }
+    
+    .verify-btn:active .btn-effect {
+        width: 200px;
+        height: 200px;
+        opacity: 1;
+    }
+    
+    .security-info {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin-top: 25px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+    
+    .security-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #aaaaaa;
+        font-size: 14px;
+        transition: all 0.8s ease;
+    }
+    
+    .security-item:hover {
+        color: #ff8400;
+    }
+    
+    .security-icon {
+        font-size: 16px;
+    }
+</style>
+
+<style>
+    .verify-footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 132, 0, 0.1);
+        text-align: center;
+    }
+    
+    .footer-text {
+        color: rgba(170, 170, 170, 0.7);
+        font-size: 13px;
+    }
+</style>
+
+    <!-- 错误提示弹窗 -->
+    <div id="errorModal" class="error-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">用户认证</div>
-                <button class="close-modal" id="closeAuthModal">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="modal-icon">⚠️</div>
+                <h3 class="modal-title">密码错误</h3>
             </div>
-            
-            <div class="modal-content">
-                <!-- 标签页 -->
-                <div class="tabs">
-                    <div class="tab active" data-tab="login">登录</div>
-                    <div class="tab" data-tab="register">注册</div>
-                </div>
-                
-                <!-- 消息显示区域 -->
-                <div id="authMessage" class="message hidden"></div>
-                
-                <!-- 登录表单 -->
-                <form id="loginForm" class="auth-form">
-                    <div class="form-group">
-                        <label class="form-label">账号/邮箱/手机号</label>
-                        <input type="text" class="form-input" id="loginAccount" required 
-                               placeholder="请输入用户名、邮箱或手机号">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">密码</label>
-                        <div class="input-with-icon">
-                            <input type="password" class="form-input" id="loginPassword" required
-                                   placeholder="请输入密码">
-                            <i class="fas fa-eye input-icon" data-target="loginPassword"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">验证码</label>
-                        <div class="captcha-group">
-                            <input type="text" class="form-input captcha-input" id="loginCaptcha" required
-                                   placeholder="输入验证码" maxlength="4">
-                            <div class="captcha-img" id="captchaImg">
-                                <canvas id="captchaCanvas" width="120" height="45"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="hcaptcha-box" id="hcaptchaBox">
-                        <div class="hcaptcha-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div>点击进行人机验证</div>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn" id="loginBtn">
-                        登录
-                    </button>
-                </form>
-                
-                <!-- 注册表单 -->
-                <form id="registerForm" class="auth-form hidden">
-                    <div class="form-group">
-                        <label class="form-label">用户名</label>
-                        <input type="text" class="form-input" id="regUsername" required
-                               placeholder="请输入用户名（3-20位）">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">邮箱</label>
-                        <input type="email" class="form-input" id="regEmail" required
-                               placeholder="请输入邮箱地址">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">手机号</label>
-                        <input type="tel" class="form-input" id="regPhone" required
-                               placeholder="请输入11位手机号" maxlength="11">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">密码</label>
-                        <div class="input-with-icon">
-                            <input type="password" class="form-input" id="regPassword" required
-                                   placeholder="请输入密码（至少8位）">
-                            <i class="fas fa-eye input-icon" data-target="regPassword"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">确认密码</label>
-                        <div class="input-with-icon">
-                            <input type="password" class="form-input" id="regConfirmPassword" required
-                                   placeholder="请再次输入密码">
-                            <i class="fas fa-eye input-icon" data-target="regConfirmPassword"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">短信验证码</label>
-                        <div class="sms-group">
-                            <input type="text" class="form-input sms-input" id="regSmsCode" required
-                                   placeholder="输入6位验证码" maxlength="6">
-                            <button type="button" class="sms-btn" id="sendSmsBtn">
-                                发送验证码
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="hcaptcha-box" id="regHcaptchaBox">
-                        <div class="hcaptcha-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div>点击进行人机验证</div>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn" id="registerBtn">
-                        注册
-                    </button>
-                </form>
+            <div class="modal-body">
+                <p>输入的密码不正确，请重新尝试</p>
+                <p class="modal-hint">正确密码：147258</p>
+            </div>
+            <div class="modal-footer">
+                <button id="modalCloseBtn" class="modal-btn">重新输入</button>
             </div>
         </div>
     </div>
+
+<style>
+    .error-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        pointer-events: none;
+    }
     
-    <!-- 主要内容 -->
-    <main class="main-content">
-        <div class="main-container">
-            <h1 class="section-title">选择服务器套餐</h1>
-            
-            <!-- 套餐列表 -->
-            <div class="plans-grid" id="plansGrid">
-                <!-- 套餐1 -->
-                <div class="plan-card" data-plan="1">
-                    <div class="plan-header">
-                        <div class="plan-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <div class="plan-name">体验版</div>
-                        <div class="plan-price">¥7</div>
-                        <div class="plan-duration">7天试用</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> 1核 CPU 处理器</li>
-                        <li><i class="fas fa-check"></i> 2GB DDR4 内存</li>
-                        <li><i class="fas fa-check"></i> 30GB SSD 存储</li>
-                        <li><i class="fas fa-check"></i> 2Mbps 带宽</li>
-                        <li><i class="fas fa-check"></i> 10G DDoS防御</li>
-                        <li><i class="fas fa-check"></i> 基础CC防护</li>
-                    </ul>
-                    <div class="plan-footer">
-                        <button class="buy-btn" data-plan="1">立即购买</button>
-                    </div>
-                </div>
-                
-                <!-- 套餐2 -->
-                <div class="plan-card" data-plan="2">
-                    <div class="plan-header">
-                        <div class="plan-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="plan-name">标准版</div>
-                        <div class="plan-price">¥30</div>
-                        <div class="plan-duration">1个月</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> 2核 CPU 处理器</li>
-                        <li><i class="fas fa-check"></i> 4GB DDR4 内存</li>
-                        <li><i class="fas fa-check"></i> 80GB SSD 存储</li>
-                        <li><i class="fas fa-check"></i> 5Mbps 带宽</li>
-                        <li><i class="fas fa-check"></i> 20G DDoS防御</li>
-                        <li><i class="fas fa-check"></i> 智能CC防护</li>
-                    </ul>
-                    <div class="plan-footer">
-                        <button class="buy-btn" data-plan="2">立即购买</button>
-                    </div>
-                </div>
-                
-                <!-- 套餐3 -->
-                <div class="plan-card featured" data-plan="3">
-                    <div class="plan-badge">推荐</div>
-                    <div class="plan-header">
-                        <div class="plan-icon">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <div class="plan-name">专业版</div>
-                        <div class="plan-price">¥88</div>
-                        <div class="plan-duration">3个月</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> 4核 CPU 处理器</li>
-                        <li><i class="fas fa-check"></i> 8GB DDR4 内存</li>
-                        <li><i class="fas fa-check"></i> 150GB SSD 存储</li>
-                        <li><i class="fas fa-check"></i> 10Mbps 带宽</li>
-                        <li><i class="fas fa-check"></i> 50G DDoS防御</li>
-                        <li><i class="fas fa-check"></i> 高级CC防护+WAF</li>
-                    </ul>
-                    <div class="plan-footer">
-                        <button class="buy-btn" data-plan="3">立即购买</button>
-                    </div>
-                </div>
-                
-                <!-- 套餐4 -->
-                <div class="plan-card" data-plan="4">
-                    <div class="plan-header">
-                        <div class="plan-icon">
-                            <i class="fas fa-gem"></i>
-                        </div>
-                        <div class="plan-name">企业版</div>
-                        <div class="plan-price">¥150</div>
-                        <div class="plan-duration">6个月</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> 8核 CPU 处理器</li>
-                        <li><i class="fas fa-check"></i> 16GB DDR4 内存</li>
-                        <li><i class="fas fa-check"></i> 300GB NVMe 存储</li>
-                        <li><i class="fas fa-check"></i> 20Mbps 带宽</li>
-                        <li><i class="fas fa-check"></i> 100G DDoS防御</li>
-                        <li><i class="fas fa-check"></i> 企业级防护集群</li>
-                    </ul>
-                    <div class="plan-footer">
-                        <button class="buy-btn" data-plan="4">立即购买</button>
-                    </div>
-                </div>
-                
-                <!-- 套餐5 -->
-                <div class="plan-card" data-plan="5">
-                    <div class="plan-header">
-                        <div class="plan-icon">
-                            <i class="fas fa-infinity"></i>
-                        </div>
-                        <div class="plan-name">永久版</div>
-                        <div class="plan-price">¥200</div>
-                        <div class="plan-duration">永久使用权</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> 4核 CPU 处理器</li>
-                        <li><i class="fas fa-check"></i> 8GB DDR4 内存</li>
-                        <li><i class="fas fa-check"></i> 200GB SSD 存储</li>
-                        <li><i class="fas fa-check"></i> 10Mbps 带宽</li>
-                        <li><i class="fas fa-check"></i> 50G 永久防御</li>
-                        <li><i class="fas fa-check"></i> 终身技术支持</li>
-                    </ul>
-                    <div class="plan-footer">
-                        <button class="buy-btn" data-plan="5">永久购买</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 登录用户支付区域 -->
-            <div class="payment-section" id="paymentSection">
-                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--neon-blue);">
-                    支付订单
-                </h2>
-                
-                <div class="payment-grid">
-                    <div class="qr-container">
-                        <div class="qr-code">
-                            <img src="https://raw.githubusercontent.com/android-dev247/My-desk/main/IMG_20260205_095720.png" 
-                                 alt="支付二维码">
-                        </div>
-                        <p style="color: var(--gray); margin-top: 1rem;">
-                            使用微信或支付宝扫码支付
-                        </p>
-                        <div style="font-size: 1.5rem; color: var(--neon-green); margin-top: 1rem;">
-                            ¥<span id="paymentTotal">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="order-details">
-                        <h3 style="margin-bottom: 1.5rem; color: var(--neon-blue);">
-                            <i class="fas fa-receipt"></i> 订单详情
-                        </h3>
-                        
-                        <div id="orderDetails">
-                            <!-- 动态生成订单详情 -->
-                        </div>
-                        
-                        <div class="payment-buttons">
-                            <button class="payment-btn btn-cancel" id="cancelPayment">
-                                取消订单
-                            </button>
-                            <button class="payment-btn btn-confirm" id="confirmPayment">
-                                我已支付
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 游客支付区域 -->
-            <div class="guest-payment-section" id="guestPaymentSection">
-                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--warning);">
-                    <i class="fas fa-user-clock"></i> 游客购买
-                </h2>
-                
-                <div class="guest-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>注意：</strong>游客购买后需要绑定邮箱才能接收服务器配置信息
-                </div>
-                
-                <div class="payment-grid">
-                    <div class="qr-container">
-                        <div class="qr-code">
-                            <img src="https://raw.githubusercontent.com/android-dev247/My-desk/main/IMG_20260205_095720.png" 
-                                 alt="支付二维码">
-                        </div>
-                        <p style="color: var(--gray); margin-top: 1rem;">
-                            使用微信或支付宝扫码支付
-                        </p>
-                        <div style="font-size: 1.5rem; color: var(--neon-green); margin-top: 1rem;">
-                            ¥<span id="guestPaymentTotal">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="order-details">
-                        <h3 style="margin-bottom: 1.5rem; color: var(--neon-blue);">
-                            <i class="fas fa-receipt"></i> 订单详情
-                        </h3>
-                        
-                        <div id="guestOrderDetails">
-                            <!-- 动态生成游客订单详情 -->
-                        </div>
-                        
-                        <div class="form-group" id="guestEmailGroup">
-                            <label class="form-label">接收邮箱</label>
-                            <input type="email" class="form-input" id="guestEmail" required
-                                   placeholder="请输入接收服务器信息的邮箱">
-                            <small style="color: var(--gray); font-size: 0.8rem;">
-                                支付成功后，服务器配置将发送到此邮箱
-                            </small>
-                        </div>
-                        
-                        <div class="payment-buttons">
-                            <button class="payment-btn btn-cancel" id="cancelGuestPayment">
-                                取消订单
-                            </button>
-                            <button class="payment-btn btn-confirm" id="confirmGuestPayment">
-                                我已支付
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    .error-modal.active {
+        display: flex;
+        pointer-events: all;
+    }
     
-    <!-- 页脚 -->
-    <footer class="main-footer">
-        <div class="main-container">
-            <div class="footer-content">
-                <h3 style="color: var(--neon-blue); margin-bottom: 1rem;">
-                    枫叶高防服务器平台
-                </h3>
-                <p style="color: var(--gray); max-width: 600px; margin: 0 auto 1.5rem;">
-                    专业提供高防服务器解决方案，有效防御DDoS/CC攻击，保障业务稳定运行。
-                    我们采用多层防御架构，确保您的服务器安全无忧。
-                </p>
-                
-                <div class="social-links">
-                    <a href="https://qm.qq.com/q/tn0HZvyGQk" class="social-link" target="_blank" title="QQ群">
-                        <i class="fab fa-qq"></i>
-                    </a>
-                    <a href="#" class="social-link" title="微信">
-                        <i class="fab fa-weixin"></i>
-                    </a>
-                    <a href="#" class="social-link" title="邮箱">
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                    <a href="#" class="social-link" title="网站">
-                        <i class="fas fa-globe"></i>
-                    </a>
-                </div>
-                
-                <div class="copyright">
-                    <p>© 2025 枫叶网络科技有限公司 版权所有</p>
-                    <p>QQ群：<a href="https://qm.qq.com/q/tn0HZvyGQk" 
-                           style="color: var(--neon-blue); text-decoration: none;">
-                           1078205267</a></p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        opacity: 0;
+        transition: opacity 1.2s ease;
+    }
+    
+    .error-modal.active .modal-overlay {
+        opacity: 1;
+    }
+    
+    .modal-content {
+        background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 350px;
+        width: 90%;
+        border: 1px solid rgba(255, 132, 0, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        position: relative;
+        z-index: 2;
+        transform: translateY(20px) scale(0.95);
+        opacity: 0;
+        transition: all 1.2s ease;
+    }
+    
+    .error-modal.active .modal-content {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    
+    .modal-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .modal-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+    }
+    
+    .modal-title {
+        color: #ff8400;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .modal-body {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .modal-body p {
+        color: #dddddd;
+        font-size: 16px;
+        margin-bottom: 10px;
+        line-height: 1.5;
+    }
+    
+    .modal-hint {
+        color: #ff8400;
+        font-weight: bold;
+        letter-spacing: 2px;
+        font-size: 18px;
+    }
+    
+    .modal-footer {
+        text-align: center;
+    }
+    
+    .modal-btn {
+        padding: 12px 35px;
+        background: linear-gradient(135deg, #ff8400 0%, #e67600 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.8s ease;
+    }
+    
+    .modal-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 132, 0, 0.3);
+    }
+</style>
 
     <script>
-        // 后端API地址
-        const API_BASE_URL = 'http://localhost:5000';
-        
-        // 全局状态
-        let currentUser = null;
-        let isGuestMode = false;
-        let selectedPlan = null;
-        let isCaptchaVerified = false;
-        let isRegCaptchaVerified = false;
-        let smsTimer = null;
-        let smsCountdown = 60;
-        let captchaText = '';
-        
-        // 套餐数据
-        const plans = {
-            1: {
-                name: "体验版",
-                price: 7,
-                duration: "7天",
-                defense: "10G DDoS防御 + 基础CC防护",
-                config: "1核2G/30G SSD/2Mbps"
-            },
-            2: {
-                name: "标准版",
-                price: 30,
-                duration: "1个月",
-                defense: "20G DDoS防御 + 智能CC防护",
-                config: "2核4G/80G SSD/5Mbps"
-            },
-            3: {
-                name: "专业版",
-                price: 88,
-                duration: "3个月",
-                defense: "50G DDoS防御 + 高级CC防护+WAF",
-                config: "4核8G/150G SSD/10Mbps"
-            },
-            4: {
-                name: "企业版",
-                price: 150,
-                duration: "6个月",
-                defense: "100G DDoS防御 + 企业级防护集群",
-                config: "8核16G/300G NVMe/20Mbps"
-            },
-            5: {
-                name: "永久版",
-                price: 200,
-                duration: "永久",
-                defense: "50G 永久防御",
-                config: "4核8G/200G SSD/10Mbps"
-            }
-        };
-        
-        // DOM加载完成后初始化
+        // 优化后的JavaScript代码
         document.addEventListener('DOMContentLoaded', function() {
-            initParticles();
-            initCaptcha();
-            initEventListeners();
-            checkAuthStatus();
-            setupFormValidation();
+            const passwordInput = document.getElementById('passwordInput');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const errorModal = document.getElementById('errorModal');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalOverlay = document.querySelector('.modal-overlay');
             
-            // 绑定购买按钮事件
-            document.querySelectorAll('.buy-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const planId = this.getAttribute('data-plan');
-                    selectPlan(planId);
-                });
-            });
+            // 确保输入框可点击
+            passwordInput.style.pointerEvents = 'auto';
             
-            // 检查网络连接
-            checkNetwork();
-        });
-        
-        // 初始化背景粒子
-        function initParticles() {
-            const container = document.getElementById('particles');
-            const particleCount = window.innerWidth < 768 ? 20 : 40;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                // 随机大小
-                const size = Math.random() * 4 + 1;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                // 随机位置
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                
-                // 随机颜色
-                const colors = ['var(--neon-blue)', 'var(--neon-green)', 'var(--neon-purple)'];
-                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                
-                // 随机动画延迟
-                particle.style.animationDelay = `${Math.random() * 20}s`;
-                
-                container.appendChild(particle);
-            }
-        }
-        
-        // 初始化验证码
-        function initCaptcha() {
-            generateCaptcha();
-            document.getElementById('captchaImg').addEventListener('click', generateCaptcha);
-        }
-        
-        // 生成验证码
-        function generateCaptcha() {
-            const canvas = document.getElementById('captchaCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // 清空画布
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 生成随机字符
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-            captchaText = '';
-            for (let i = 0; i < 4; i++) {
-                captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            
-            // 保存到localStorage
-            localStorage.setItem('captcha', captchaText);
-            
-            // 绘制背景
-            ctx.fillStyle = '#1a1a2e';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // 绘制干扰线
-            ctx.lineWidth = 1;
-            for (let i = 0; i < 6; i++) {
-                ctx.beginPath();
-                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                ctx.strokeStyle = `rgba(0, 238, 255, ${Math.random() * 0.3 + 0.2})`;
-                ctx.stroke();
-            }
-            
-            // 绘制字符
-            ctx.font = 'bold 28px Arial';
-            ctx.textBaseline = 'middle';
-            ctx.textAlign = 'center';
-            
-            for (let i = 0; i < captchaText.length; i++) {
-                ctx.save();
-                const x = 30 + i * 30;
-                const y = 22;
-                
-                // 随机旋转和变形
-                ctx.translate(x, y);
-                ctx.rotate((Math.random() - 0.5) * 0.4);
-                
-                // 随机颜色
-                ctx.fillStyle = i % 2 === 0 ? 'var(--neon-blue)' : 'var(--neon-green)';
-                
-                ctx.fillText(captchaText[i], 0, 0);
-                ctx.restore();
-            }
-        }
-        
-        // 初始化事件监听器
-        function initEventListeners() {
-            // 显示认证模态框
-            document.getElementById('showAuthBtn').addEventListener('click', showAuthModal);
-            
-            // 游客购买按钮
-            document.getElementById('guestLoginBtn').addEventListener('click', function() {
-                isGuestMode = true;
-                updateUIForGuest();
-            });
-            
-            // 关闭模态框
-            document.getElementById('closeAuthModal').addEventListener('click', hideAuthModal);
-            
-            // 点击模态框外部关闭
-            document.getElementById('authModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideAuthModal();
-                }
-            });
-            
-            // 切换标签页
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    switchAuthTab(this.getAttribute('data-tab'));
-                });
-            });
-            
-            // 切换密码可见性
-            document.querySelectorAll('.input-icon').forEach(icon => {
-                icon.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        this.classList.remove('fa-eye');
-                        this.classList.add('fa-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        this.classList.remove('fa-eye-slash');
-                        this.classList.add('fa-eye');
-                    }
-                });
-            });
-            
-            // 人机验证
-            document.getElementById('hcaptchaBox').addEventListener('click', function() {
-                if (!isCaptchaVerified) {
-                    this.classList.add('verified');
-                    this.innerHTML = `
-                        <div class="hcaptcha-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div>验证成功</div>
-                    `;
-                    isCaptchaVerified = true;
-                }
-            });
-            
-            document.getElementById('regHcaptchaBox').addEventListener('click', function() {
-                if (!isRegCaptchaVerified) {
-                    this.classList.add('verified');
-                    this.innerHTML = `
-                        <div class="hcaptcha-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div>验证成功</div>
-                    `;
-                    isRegCaptchaVerified = true;
-                }
-            });
-            
-            // 发送短信验证码
-            document.getElementById('sendSmsBtn').addEventListener('click', sendSmsCode);
-            
-            // 表单提交
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('registerForm').addEventListener('submit', handleRegister);
-            
-            // 支付相关
-            document.getElementById('cancelPayment').addEventListener('click', cancelPayment);
-            document.getElementById('confirmPayment').addEventListener('click', confirmPayment);
-            
-            // 游客支付相关
-            document.getElementById('cancelGuestPayment').addEventListener('click', cancelGuestPayment);
-            document.getElementById('confirmGuestPayment').addEventListener('click', confirmGuestPayment);
-            
-            // 退出登录
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-        }
-        
-        // 检查网络连接
-        function checkNetwork() {
-            if (!navigator.onLine) {
-                showMessage('网络连接已断开，请检查网络设置', 'error');
-            }
-            
-            window.addEventListener('online', () => {
-                showMessage('网络连接已恢复', 'success');
-            });
-            
-            window.addEventListener('offline', () => {
-                showMessage('网络连接已断开', 'error');
-            });
-        }
-        
-        // 设置表单验证
-        function setupFormValidation() {
-            // 手机号格式验证
-            document.getElementById('regPhone').addEventListener('input', function() {
-                const phone = this.value;
-                if (phone.length === 11 && !/^1[3-9]\d{9}$/.test(phone)) {
-                    this.style.borderColor = 'var(--danger)';
-                } else {
-                    this.style.borderColor = '';
-                }
-            });
-            
-            // 密码匹配验证
-            const password = document.getElementById('regPassword');
-            const confirmPassword = document.getElementById('regConfirmPassword');
-            
-            confirmPassword.addEventListener('input', function() {
-                if (this.value && this.value !== password.value) {
-                    this.style.borderColor = 'var(--danger)';
-                } else {
-                    this.style.borderColor = '';
-                }
-            });
-            
-            // 游客邮箱验证
-            document.getElementById('guestEmail').addEventListener('input', function() {
-                const email = this.value;
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (email && !emailRegex.test(email)) {
-                    this.style.borderColor = 'var(--danger)';
-                } else {
-                    this.style.borderColor = '';
-                }
-            });
-        }
-        
-        // 显示认证模态框
-        function showAuthModal() {
-            document.getElementById('authModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            
-            // 重置表单
-            resetForms();
-            generateCaptcha();
-        }
-        
-        // 隐藏认证模态框
-        function hideAuthModal() {
-            document.getElementById('authModal').style.display = 'none';
-            document.body.style.overflow = '';
-        }
-        
-        // 切换认证标签页
-        function switchAuthTab(tabName) {
-            // 更新标签页状态
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-tab') === tabName) {
-                    tab.classList.add('active');
-                }
-            });
-            
-            // 显示对应表单
-            document.getElementById('loginForm').classList.toggle('hidden', tabName !== 'login');
-            document.getElementById('registerForm').classList.toggle('hidden', tabName !== 'register');
-            
-            // 重置状态
-            isCaptchaVerified = false;
-            isRegCaptchaVerified = false;
-            
-            // 重置人机验证框
-            const hcaptchaBox = document.getElementById('hcaptchaBox');
-            const regHcaptchaBox = document.getElementById('regHcaptchaBox');
-            
-            hcaptchaBox.classList.remove('verified');
-            hcaptchaBox.innerHTML = `
-                <div class="hcaptcha-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <div>点击进行人机验证</div>
-            `;
-            
-            regHcaptchaBox.classList.remove('verified');
-            regHcaptchaBox.innerHTML = `
-                <div class="hcaptcha-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <div>点击进行人机验证</div>
-            `;
-            
-            // 隐藏消息
-            document.getElementById('authMessage').classList.add('hidden');
-        }
-        
-        // 重置表单
-        function resetForms() {
-            document.getElementById('loginForm').reset();
-            document.getElementById('registerForm').reset();
-            
-            // 重置短信按钮
-            const smsBtn = document.getElementById('sendSmsBtn');
-            smsBtn.disabled = false;
-            smsBtn.textContent = '发送验证码';
-            
-            if (smsTimer) {
-                clearInterval(smsTimer);
-                smsCountdown = 60;
-            }
-            
-            // 重置密码输入框图标
-            document.querySelectorAll('.input-icon').forEach(icon => {
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            });
-        }
-        
-        // 更新UI为游客模式
-        function updateUIForGuest() {
-            // 生成随机游客用户名
-            const guestUsername = `guest_${Math.random().toString(36).substr(2, 8)}`;
-            
-            currentUser = {
-                id: 0,
-                username: guestUsername,
-                isGuest: true,
-                balance: 0,
-                servers: 0,
-                totalSpent: 0
-            };
-            
-            document.getElementById('authButtons').style.display = 'none';
-            document.getElementById('userInfo').style.display = 'flex';
-            document.getElementById('userName').textContent = '游客用户';
-            document.getElementById('userAvatar').textContent = 'G';
-            document.getElementById('userBalance').textContent = '0';
-            
-            showMessage('您已进入游客模式，可以直接购买服务器', 'info');
-        }
-        
-        // 显示消息
-        function showMessage(text, type = 'info') {
-            const messageDiv = document.getElementById('authMessage');
-            messageDiv.textContent = text;
-            messageDiv.className = `message message-${type}`;
-            messageDiv.classList.remove('hidden');
-            
-            // 5秒后自动隐藏
+            // 输入框自动获取焦点
             setTimeout(() => {
-                messageDiv.classList.add('hidden');
-            }, 5000);
-        }
-        
-        // 发送短信验证码
-        async function sendSmsCode() {
-            if (!isRegCaptchaVerified) {
-                showMessage('请先完成人机验证', 'error');
-                return;
-            }
+                passwordInput.focus();
+            }, 500);
             
-            const phone = document.getElementById('regPhone').value;
+            // 输入框动画效果
+            passwordInput.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
             
-            // 验证手机号格式
-            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
-                showMessage('请输入有效的手机号', 'error');
-                return;
-            }
+            passwordInput.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
             
-            const btn = document.getElementById('sendSmsBtn');
-            btn.disabled = true;
-            btn.classList.add('loading');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/send-sms`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ phone: phone })
-                });
+            // 验证按钮点击事件
+            verifyBtn.addEventListener('click', function() {
+                const password = passwordInput.value.trim();
                 
-                const data = await response.json();
-                
-                if (data.success) {
-                    showMessage('验证码已发送，请注意查收', 'success');
-                    
-                    // 开始倒计时
-                    smsTimer = setInterval(() => {
-                        smsCountdown--;
-                        btn.textContent = `${smsCountdown}秒后重发`;
-                        
-                        if (smsCountdown <= 0) {
-                            clearInterval(smsTimer);
-                            btn.disabled = false;
-                            btn.classList.remove('loading');
-                            btn.textContent = '发送验证码';
-                            smsCountdown = 60;
-                        }
-                    }, 1000);
-                } else {
-                    showMessage('发送失败: ' + data.message, 'error');
-                    btn.disabled = false;
-                    btn.classList.remove('loading');
-                }
-            } catch (error) {
-                console.error('发送短信失败:', error);
-                showMessage('发送失败，请检查网络连接', 'error');
-                btn.disabled = false;
-                btn.classList.remove('loading');
-            }
-        }
-        
-        // 处理登录
-        async function handleLogin(e) {
-            e.preventDefault();
-            
-            if (!isCaptchaVerified) {
-                showMessage('请先完成人机验证', 'error');
-                return;
-            }
-            
-            const account = document.getElementById('loginAccount').value;
-            const password = document.getElementById('loginPassword').value;
-            const captcha = document.getElementById('loginCaptcha').value;
-            
-            // 验证验证码
-            const savedCaptcha = localStorage.getItem('captcha');
-            if (!captcha || captcha.toUpperCase() !== savedCaptcha?.toUpperCase()) {
-                showMessage('验证码错误', 'error');
-                generateCaptcha();
-                return;
-            }
-            
-            const btn = document.getElementById('loginBtn');
-            btn.disabled = true;
-            btn.classList.add('loading');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        account: account,
-                        password: password
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentUser = data.user;
-                    currentUser.isGuest = false;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUserUI();
-                    hideAuthModal();
-                    showMessage('登录成功！', 'success');
-                } else {
-                    showMessage('登录失败: ' + data.message, 'error');
-                    generateCaptcha();
-                }
-            } catch (error) {
-                console.error('登录失败:', error);
-                showMessage('登录失败，请检查网络连接', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-            }
-        }
-        
-        // 处理注册
-        async function handleRegister(e) {
-            e.preventDefault();
-            
-            if (!isRegCaptchaVerified) {
-                showMessage('请先完成人机验证', 'error');
-                return;
-            }
-            
-            const username = document.getElementById('regUsername').value;
-            const email = document.getElementById('regEmail').value;
-            const phone = document.getElementById('regPhone').value;
-            const password = document.getElementById('regPassword').value;
-            const confirmPassword = document.getElementById('regConfirmPassword').value;
-            const smsCode = document.getElementById('regSmsCode').value;
-            
-            // 验证数据
-            if (password !== confirmPassword) {
-                showMessage('两次输入的密码不一致', 'error');
-                return;
-            }
-            
-            if (password.length < 8) {
-                showMessage('密码长度至少8位', 'error');
-                return;
-            }
-            
-            if (!/^1[3-9]\d{9}$/.test(phone)) {
-                showMessage('请输入有效的手机号', 'error');
-                return;
-            }
-            
-            const btn = document.getElementById('registerBtn');
-            btn.disabled = true;
-            btn.classList.add('loading');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        email: email,
-                        phone: phone,
-                        password: password,
-                        smsCode: smsCode
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentUser = data.user;
-                    currentUser.isGuest = false;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUserUI();
-                    hideAuthModal();
-                    showMessage('注册成功！', 'success');
-                } else {
-                    showMessage('注册失败: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('注册失败:', error);
-                showMessage('注册失败，请检查网络连接', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-            }
-        }
-        
-        // 检查认证状态
-        function checkAuthStatus() {
-            const userData = localStorage.getItem('currentUser');
-            if (userData) {
-                try {
-                    currentUser = JSON.parse(userData);
-                    updateUserUI();
-                } catch (e) {
-                    console.error('解析用户数据失败:', e);
-                    localStorage.removeItem('currentUser');
-                }
-            }
-        }
-        
-        // 更新用户界面
-        function updateUserUI() {
-            if (currentUser) {
-                document.getElementById('authButtons').style.display = 'none';
-                document.getElementById('userInfo').style.display = 'flex';
-                document.getElementById('userName').textContent = currentUser.isGuest ? '游客用户' : currentUser.username;
-                document.getElementById('userAvatar').textContent = currentUser.isGuest ? 'G' : currentUser.username.charAt(0).toUpperCase();
-                document.getElementById('userBalance').textContent = currentUser.balance || '0';
-            } else {
-                document.getElementById('authButtons').style.display = 'flex';
-                document.getElementById('userInfo').style.display = 'none';
-            }
-        }
-        
-        // 选择套餐
-        function selectPlan(planId) {
-            // 如果没有登录，直接进入游客模式
-            if (!currentUser) {
-                updateUIForGuest();
-            }
-            
-            selectedPlan = plans[planId];
-            if (!selectedPlan) return;
-            
-            if (currentUser.isGuest) {
-                // 游客模式
-                updateGuestPaymentDetails();
-                document.getElementById('guestPaymentSection').style.display = 'block';
-                document.getElementById('paymentSection').style.display = 'none';
-                
-                // 滚动到支付区域
-                document.getElementById('guestPaymentSection').scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            } else {
-                // 登录用户模式
-                updatePaymentDetails();
-                document.getElementById('paymentSection').style.display = 'block';
-                document.getElementById('guestPaymentSection').style.display = 'none';
-                
-                // 滚动到支付区域
-                document.getElementById('paymentSection').scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
-        }
-        
-        // 更新支付详情
-        function updatePaymentDetails() {
-            if (!selectedPlan) return;
-            
-            document.getElementById('paymentTotal').textContent = selectedPlan.price;
-            
-            const orderDetails = document.getElementById('orderDetails');
-            orderDetails.innerHTML = `
-                <div class="order-row">
-                    <span>套餐名称</span>
-                    <span>${selectedPlan.name}</span>
-                </div>
-                <div class="order-row">
-                    <span>使用期限</span>
-                    <span>${selectedPlan.duration}</span>
-                </div>
-                <div class="order-row">
-                    <span>防御等级</span>
-                    <span>${selectedPlan.defense}</span>
-                </div>
-                <div class="order-row">
-                    <span>配置详情</span>
-                    <span>${selectedPlan.config}</span>
-                </div>
-                <div class="order-row">
-                    <span>下单时间</span>
-                    <span>${new Date().toLocaleString('zh-CN')}</span>
-                </div>
-                <div class="order-row order-total">
-                    <span>应付总额</span>
-                    <span>¥${selectedPlan.price}</span>
-                </div>
-            `;
-        }
-        
-        // 更新游客支付详情
-        function updateGuestPaymentDetails() {
-            if (!selectedPlan) return;
-            
-            document.getElementById('guestPaymentTotal').textContent = selectedPlan.price;
-            
-            const orderDetails = document.getElementById('guestOrderDetails');
-            orderDetails.innerHTML = `
-                <div class="order-row">
-                    <span>套餐名称</span>
-                    <span>${selectedPlan.name}</span>
-                </div>
-                <div class="order-row">
-                    <span>使用期限</span>
-                    <span>${selectedPlan.duration}</span>
-                </div>
-                <div class="order-row">
-                    <span>防御等级</span>
-                    <span>${selectedPlan.defense}</span>
-                </div>
-                <div class="order-row">
-                    <span>配置详情</span>
-                    <span>${selectedPlan.config}</span>
-                </div>
-                <div class="order-row">
-                    <span>下单时间</span>
-                    <span>${new Date().toLocaleString('zh-CN')}</span>
-                </div>
-                <div class="order-row order-total">
-                    <span>应付总额</span>
-                    <span>¥${selectedPlan.price}</span>
-                </div>
-            `;
-        }
-        
-        // 取消支付
-        function cancelPayment() {
-            if (confirm('确定取消订单吗？')) {
-                document.getElementById('paymentSection').style.display = 'none';
-                selectedPlan = null;
-            }
-        }
-        
-        // 取消游客支付
-        function cancelGuestPayment() {
-            if (confirm('确定取消订单吗？')) {
-                document.getElementById('guestPaymentSection').style.display = 'none';
-                selectedPlan = null;
-            }
-        }
-        
-        // 确认支付
-        async function confirmPayment() {
-            if (!selectedPlan || !currentUser) return;
-            
-            if (!confirm(`确认支付 ¥${selectedPlan.price} 购买 ${selectedPlan.name} 套餐吗？`)) {
-                return;
-            }
-            
-            const planId = Object.keys(plans).find(key => plans[key] === selectedPlan);
-            const btn = document.getElementById('confirmPayment');
-            btn.disabled = true;
-            btn.classList.add('loading');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/pay`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        planId: planId,
-                        amount: selectedPlan.price
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('支付成功！服务器正在开通中...\n开通信息将发送到您的邮箱。');
-                    document.getElementById('paymentSection').style.display = 'none';
-                    
-                    // 更新用户信息
-                    currentUser.balance = data.newBalance || currentUser.balance;
-                    currentUser.servers = (parseInt(currentUser.servers) || 0) + 1;
-                    currentUser.totalSpent = (parseInt(currentUser.totalSpent) || 0) + selectedPlan.price;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUserUI();
-                } else {
-                    alert('支付失败: ' + data.message);
-                }
-            } catch (error) {
-                console.error('支付失败:', error);
-                alert('支付失败，请检查网络连接');
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-            }
-        }
-        
-        // 确认游客支付
-        async function confirmGuestPayment() {
-            if (!selectedPlan || !currentUser) return;
-            
-            const guestEmail = document.getElementById('guestEmail').value;
-            
-            // 验证邮箱
-            if (!guestEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail)) {
-                alert('请输入有效的邮箱地址');
-                return;
-            }
-            
-            if (!confirm(`确认支付 ¥${selectedPlan.price} 购买 ${selectedPlan.name} 套餐吗？`)) {
-                return;
-            }
-            
-            const planId = Object.keys(plans).find(key => plans[key] === selectedPlan);
-            const btn = document.getElementById('confirmGuestPayment');
-            btn.disabled = true;
-            btn.classList.add('loading');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/guest-pay`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        planId: planId,
-                        amount: selectedPlan.price,
-                        email: guestEmail,
-                        guestUsername: currentUser.username
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('支付成功！服务器正在开通中...\n开通信息将发送到您提供的邮箱。');
-                    document.getElementById('guestPaymentSection').style.display = 'none';
-                    
-                    // 游客购买后建议注册
-                    if (confirm('购买成功！建议您注册账号以便管理服务器，是否立即注册？')) {
-                        showAuthModal();
-                        switchAuthTab('register');
-                    }
-                } else {
-                    alert('支付失败: ' + data.message);
-                }
-            } catch (error) {
-                console.error('支付失败:', error);
-                alert('支付失败，请检查网络连接');
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-            }
-        }
-        
-        // 退出登录
-        async function logout() {
-            if (confirm('确定要退出登录吗？')) {
-                try {
-                    if (!currentUser.isGuest) {
-                        await fetch(`${API_BASE_URL}/api/logout`, {
-                            method: 'POST',
-                            credentials: 'include'
-                        });
-                    }
-                } catch (error) {
-                    console.error('退出登录失败:', error);
-                }
-                
-                currentUser = null;
-                localStorage.removeItem('currentUser');
-                updateUserUI();
-                showMessage('已成功退出登录', 'success');
-            }
-        }
-        
-        // 显示确认对话框
-        function showConfirm(message, callback) {
-            if (confirm(message)) {
-                callback();
-            }
-        }
-        
-        // 显示提示
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            toast.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 12px 20px;
-                background: var(--card-bg);
-                border: 1px solid ${type === 'success' ? 'var(--secondary)' : type === 'error' ? 'var(--danger)' : 'var(--neon-blue)'};
-                border-radius: 8px;
-                z-index: 9999;
-                animation: slideIn 0.3s ease;
-            `;
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease';
+                // 按钮点击反馈
+                this.style.transform = 'scale(0.98)';
                 setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
-        }
-        
-        // 添加CSS动画
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
+                    this.style.transform = '';
+                }, 150);
+                
+                if (password === '147258') {
+                    // 成功效果
+                    this.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+                    this.innerHTML = '<span class="btn-text">✓ 验证成功</span>';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'https://v.kuaishou.com/KgNa3os1';
+                    }, 800);
+                } else {
+                    // 错误效果
+                    passwordInput.style.borderColor = '#ff4444';
+                    passwordInput.style.animation = 'shake 0.5s ease';
+                    
+                    setTimeout(() => {
+                        passwordInput.style.animation = '';
+                        passwordInput.style.borderColor = '';
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                    }, 500);
+                    
+                    // 显示错误弹窗
+                    errorModal.classList.add('active');
+                }
+            });
+            
+            // 回车键支持
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyBtn.click();
+                }
+            });
+            
+            // 关闭弹窗
+            function closeModal() {
+                errorModal.classList.remove('active');
+                passwordInput.focus();
             }
             
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', closeModal);
+            
+            // 输入框键盘事件
+            passwordInput.addEventListener('input', function() {
+                // 限制只能输入数字
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // 实时验证效果
+                if (this.value.length === 6) {
+                    this.style.borderColor = '#ff8400';
+                } else {
+                    this.style.borderColor = '';
+                }
+            });
+            
+            // 添加shake动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 移除滚动监听以避免性能问题
+            // 简化动画，移除复杂的GSAP依赖
+        });
     </script>
 </body>
 </html>
