@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>安全访问验证</title>
+    <title>安全验证</title>
     <style>
         * {
             margin: 0;
@@ -13,327 +13,159 @@
         
         body {
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #0c0c14 0%, #1a1a2e 50%, #0f172a 100%);
+            background: linear-gradient(135deg, #0f0f1f 0%, #1a1a2e 50%, #0d1117 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            color: #ffffff;
+            user-select: none;
+            -webkit-user-select: none;
         }
         
         .container {
             width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 500px;
             padding: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 作者信息模块 -->
-        <div class="author-info">
-            <div class="author-content">
-                <h1 class="author-name">枫叶</h1>
-                <div class="group-info">
-                    <span class="qq-icon">🐧</span>
-                    <span class="group-number">QQ群: 1078205267</span>
+        <!-- 密码输入模块 -->
+        <div class="password-module">
+            <div class="module-header">
+                <div class="security-icon">🔐</div>
+                <h1 class="module-title">安全验证</h1>
+                <p class="module-subtitle">请输入访问密码</p>
+            </div>
+            
+            <div class="module-body">
+                <div class="input-container">
+                    <input type="password" 
+                           id="passwordInput"
+                           class="password-input"
+                           placeholder="请输入6位数字密码"
+                           maxlength="6"
+                           autocomplete="off"
+                           autofocus>
+                    <div class="input-line"></div>
                 </div>
+                
+                <button id="submitBtn" class="submit-btn">
+                    <span class="btn-text">验证</span>
+                </button>
+            </div>
+            
+            <div class="module-footer">
+                <p class="hint-text">* 密码为6位数字</p>
             </div>
         </div>
 
 <style>
-    .author-info {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 15px 20px;
-        z-index: 1000;
-        background: rgba(10, 10, 20, 0.9);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        border-bottom: 1px solid rgba(255, 132, 0, 0.2);
-        will-change: transform;
-    }
-    
-    .author-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-    }
-    
-    .author-name {
-        color: #ff8400;
-        font-size: 24px;
-        font-weight: bold;
-        letter-spacing: 1px;
-        transition: color 0.8s ease;
-    }
-    
-    .author-name:hover {
-        color: #ffaa44;
-    }
-    
-    .group-info {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 15px;
-        background: rgba(51, 51, 51, 0.6);
-        border-radius: 20px;
-        transition: all 0.8s ease;
-    }
-    
-    .group-info:hover {
-        background: rgba(255, 132, 0, 0.2);
-    }
-    
-    .qq-icon {
-        font-size: 20px;
-    }
-    
-    .group-number {
-        color: #f5f5f5;
-        font-size: 16px;
-    }
-</style>
-
-        <!-- 密码验证模块 -->
-        <div class="password-verify">
-            <div class="verify-container">
-                <div class="verify-header">
-                    <div class="lock-icon">🔒</div>
-                    <h2 class="verify-title">安全访问验证</h2>
-                    <p class="verify-subtitle">请输入访问密码继续</p>
-                </div>
-                
-                <div class="verify-body">
-                    <div class="password-input-group">
-                        <div class="input-wrapper">
-                            <input type="password" 
-                                   id="passwordInput" 
-                                   class="password-input"
-                                   placeholder="请输入6位数字密码"
-                                   maxlength="6"
-                                   autocomplete="off"
-                                   autocorrect="off"
-                                   autocapitalize="off"
-                                   spellcheck="false">
-                            <div class="input-highlight"></div>
-                        </div>
-                        
-                        <div class="password-hint">
-                            <span class="hint-text">密码提示：</span>
-                            <span class="hint-numbers">诺宁不知道密码请进入qq群聊获取1078205267</span>
-                        </div>
-                    </div>
-                    
-                    <button id="verifyBtn" class="verify-btn">
-                        <span class="btn-text">确认验证</span>
-                        <div class="btn-effect"></div>
-                    </button>
-                    
-                    <div class="security-info">
-                        <div class="security-item">
-                            <span class="security-icon">🛡️</span>
-                            <span>安全加密传输</span>
-                        </div>
-                        <div class="security-item">
-                            <span class="security-icon">🔐</span>
-                            <span>数据隐私保护</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="verify-footer">
-                    <p class="footer-text">© 2023 枫叶安全系统 | 仅供授权访问</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<style>
-    .password-verify {
-        margin-top: 80px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        will-change: transform;
-    }
-    
-    .verify-container {
-        background: rgba(255, 255, 255, 0.08);
+    .password-module {
+        background: rgba(25, 25, 35, 0.8);
         backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
         border-radius: 20px;
-        padding: 40px;
-        max-width: 500px;
-        width: 100%;
-        border: 1px solid rgba(255, 132, 0, 0.15);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        padding: 40px 30px;
+        border: 1px solid rgba(255, 132, 0, 0.2);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         position: relative;
         overflow: hidden;
-        will-change: transform;
     }
     
-    .verify-container::before {
+    .password-module::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
+        width: 100%;
         height: 3px;
         background: linear-gradient(90deg, transparent, #ff8400, transparent);
-        transform: translateX(-100%);
-        animation: slideLine 3s ease-in-out infinite;
     }
     
-    @keyframes slideLine {
-        0% {
-            transform: translateX(-100%);
-        }
-        50% {
-            transform: translateX(100%);
-        }
-        100% {
-            transform: translateX(100%);
-        }
-    }
-    
-    .verify-header {
+    .module-header {
         text-align: center;
         margin-bottom: 30px;
     }
     
-    .lock-icon {
+    .security-icon {
         font-size: 48px;
         margin-bottom: 15px;
-        display: inline-block;
-        animation: gentleBounce 3s ease-in-out infinite;
-        filter: drop-shadow(0 0 10px rgba(255, 132, 0, 0.3));
+        animation: float 3s ease-in-out infinite;
     }
     
-    @keyframes gentleBounce {
+    @keyframes float {
         0%, 100% {
             transform: translateY(0);
         }
         50% {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
         }
     }
     
-    .verify-title {
+    .module-title {
         color: #ff8400;
-        font-size: 32px;
-        font-weight: bold;
+        font-size: 28px;
         margin-bottom: 8px;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
     }
     
-    .verify-subtitle {
-        color: #cccccc;
-        font-size: 16px;
-        opacity: 0.9;
+    .module-subtitle {
+        color: #aaaaaa;
+        font-size: 14px;
     }
 </style>
 
 <style>
-    .verify-body {
-        position: relative;
+    .module-body {
+        margin-bottom: 25px;
     }
     
-    .password-input-group {
-        margin-bottom: 30px;
-    }
-    
-    .input-wrapper {
+    .input-container {
         position: relative;
-        margin-bottom: 15px;
+        margin-bottom: 25px;
     }
     
     .password-input {
         width: 100%;
         padding: 18px 20px;
-        font-size: 20px;
-        background: rgba(30, 30, 40, 0.8);
-        border: 2px solid rgba(255, 132, 0, 0.3);
+        font-size: 24px;
+        background: rgba(40, 40, 50, 0.8);
+        border: 2px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
         color: #ffffff;
         text-align: center;
-        letter-spacing: 8px;
+        letter-spacing: 15px;
         outline: none;
-        transition: all 0.8s ease;
+        transition: all 1.2s ease;
         font-weight: bold;
-    }
-    
-    .password-input::placeholder {
-        color: rgba(255, 255, 255, 0.4);
-        letter-spacing: normal;
-        font-size: 16px;
-        font-weight: normal;
     }
     
     .password-input:focus {
         border-color: #ff8400;
         background: rgba(255, 132, 0, 0.05);
-        box-shadow: 0 0 20px rgba(255, 132, 0, 0.2);
+        box-shadow: 0 0 30px rgba(255, 132, 0, 0.1);
     }
     
-    .input-highlight {
+    .input-line {
         position: absolute;
-        bottom: -2px;
+        bottom: 0;
         left: 50%;
         width: 0;
         height: 2px;
         background: #ff8400;
-        transition: all 0.8s ease;
         transform: translateX(-50%);
+        transition: width 1.2s ease;
     }
     
-    .password-input:focus ~ .input-highlight {
+    .password-input:focus ~ .input-line {
         width: 100%;
     }
     
-    .password-hint {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 12px;
-        background: rgba(255, 132, 0, 0.08);
-        border-radius: 8px;
-        transition: all 0.8s ease;
-    }
-    
-    .password-hint:hover {
-        background: rgba(255, 132, 0, 0.15);
-    }
-    
-    .hint-text {
-        color: #cccccc;
-        font-size: 15px;
-    }
-    
-    .hint-numbers {
-        color: #ff8400;
-        font-size: 18px;
-        font-weight: bold;
-        letter-spacing: 4px;
-    }
-</style>
-
-<style>
-    .verify-btn {
-        position: relative;
+    .submit-btn {
         width: 100%;
-        padding: 20px;
+        padding: 18px;
         background: linear-gradient(135deg, #ff8400 0%, #e67600 100%);
         border: none;
         border-radius: 12px;
@@ -341,329 +173,749 @@
         font-size: 18px;
         font-weight: bold;
         cursor: pointer;
-        overflow: hidden;
-        margin: 25px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.8s ease;
-        will-change: transform;
-    }
-    
-    .verify-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(255, 132, 0, 0.3);
-        background: linear-gradient(135deg, #ff9400 0%, #ff8400 100%);
-    }
-    
-    .verify-btn:active {
-        transform: translateY(-1px);
-        transition: all 0.2s ease;
-    }
-    
-    .btn-text {
+        transition: all 1.2s ease;
         position: relative;
-        z-index: 2;
-        transition: all 0.8s ease;
+        overflow: hidden;
     }
     
-    .btn-effect {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: all 0.8s ease;
-        opacity: 0;
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(255, 132, 0, 0.3);
     }
     
-    .verify-btn:active .btn-effect {
-        width: 200px;
-        height: 200px;
-        opacity: 1;
+    .submit-btn:active {
+        transform: translateY(-1px);
     }
     
-    .security-info {
-        display: flex;
-        justify-content: center;
-        gap: 25px;
-        margin-top: 25px;
-        padding: 15px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-    }
-    
-    .security-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #aaaaaa;
-        font-size: 14px;
-        transition: all 0.8s ease;
-    }
-    
-    .security-item:hover {
-        color: #ff8400;
-    }
-    
-    .security-icon {
-        font-size: 16px;
-    }
-</style>
-
-<style>
-    .verify-footer {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255, 132, 0, 0.1);
+    .module-footer {
         text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .footer-text {
-        color: rgba(170, 170, 170, 0.7);
+    .hint-text {
+        color: #666666;
         font-size: 13px;
     }
 </style>
+    </div>
 
-    <!-- 错误提示弹窗 -->
-    <div id="errorModal" class="error-modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-icon">⚠️</div>
-                <h3 class="modal-title">密码错误</h3>
+    <!-- 人机验证模块 -->
+    <div id="captchaModule" class="captcha-module">
+        <div class="captcha-content">
+            <div class="captcha-header">
+                <div class="robot-icon">🤖</div>
+                <h2 class="captcha-title">人机验证</h2>
+                <p class="captcha-subtitle">请完成验证以继续</p>
             </div>
-            <div class="modal-body">
-                <p>输入的密码不正确，请重新尝试</p>
-                <p class="modal-hint">正确密码：147258</p>
+            
+            <div class="captcha-body">
+                <div class="captcha-instruction">
+                    <p>请按住滑块，拖动到正确位置</p>
+                </div>
+                
+                <div class="captcha-container">
+                    <div class="captcha-track">
+                        <div class="track-bg"></div>
+                        <div class="track-text">请拖动滑块完成验证</div>
+                        <div class="target-area"></div>
+                    </div>
+                    
+                    <div class="captcha-slider">
+                        <div class="slider-btn">
+                            <div class="arrow-icon">➜</div>
+                        </div>
+                        <div class="slider-text">拖动滑块</div>
+                    </div>
+                    
+                    <div class="captcha-result">
+                        <div class="result-icon">❓</div>
+                        <div class="result-text">等待验证...</div>
+                    </div>
+                </div>
+                
+                <div class="captcha-timer">
+                    <div class="timer-text">验证用时: <span id="timerValue">0.0</span>秒</div>
+                    <div class="timer-warning" id="aiWarning">⚠️ 验证速度异常，疑似自动化操作</div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button id="modalCloseBtn" class="modal-btn">重新输入</button>
+            
+            <div class="captcha-footer">
+                <button id="retryCaptcha" class="captcha-btn">重新验证</button>
+                <button id="submitCaptcha" class="captcha-btn primary" disabled>确认验证</button>
             </div>
         </div>
     </div>
 
 <style>
-    .error-modal {
+    .captcha-module {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
+        background: rgba(15, 15, 25, 0.95);
+        backdrop-filter: blur(10px);
         display: none;
         justify-content: center;
         align-items: center;
         z-index: 2000;
-        pointer-events: none;
+        opacity: 0;
+        transition: opacity 1.2s ease;
     }
     
-    .error-modal.active {
+    .captcha-module.active {
         display: flex;
-        pointer-events: all;
+        opacity: 1;
     }
     
-    .modal-overlay {
+    .captcha-content {
+        background: rgba(30, 30, 40, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        width: 90%;
+        max-width: 400px;
+        border: 1px solid rgba(255, 132, 0, 0.2);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        transform: translateY(30px) scale(0.95);
+        transition: all 1.2s ease;
+    }
+    
+    .captcha-module.active .captcha-content {
+        transform: translateY(0) scale(1);
+    }
+    
+    .captcha-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .robot-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+    }
+    
+    .captcha-title {
+        color: #ff8400;
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+    
+    .captcha-subtitle {
+        color: #aaaaaa;
+        font-size: 14px;
+    }
+</style>
+
+<style>
+    .captcha-body {
+        margin-bottom: 25px;
+    }
+    
+    .captcha-instruction {
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 10px;
+        background: rgba(255, 132, 0, 0.1);
+        border-radius: 8px;
+    }
+    
+    .captcha-instruction p {
+        color: #ff8400;
+        font-weight: bold;
+    }
+    
+    .captcha-container {
+        margin-bottom: 20px;
+    }
+    
+    .captcha-track {
+        position: relative;
+        height: 50px;
+        background: rgba(50, 50, 60, 0.8);
+        border-radius: 25px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .track-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ff8400, #ffaa44);
+        border-radius: 25px;
+        transition: width 0.3s ease;
+    }
+    
+    .track-text {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(3px);
-        -webkit-backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #cccccc;
+        font-size: 14px;
+        z-index: 1;
+    }
+    
+    .target-area {
+        position: absolute;
+        top: 5px;
+        right: 100px;
+        width: 60px;
+        height: 40px;
+        background: rgba(76, 175, 80, 0.2);
+        border: 2px dashed #4CAF50;
+        border-radius: 20px;
+        display: none;
+    }
+        
+    .captcha-slider {
+        position: relative;
+        height: 60px;
+    }
+    
+    .slider-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #ff8400, #e67600);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: grab;
+        user-select: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+        z-index: 10;
+    }
+    
+    .slider-btn:active {
+        cursor: grabbing;
+        transform: scale(0.95);
+    }
+    
+    .arrow-icon {
+        color: white;
+        font-size: 20px;
+        transition: transform 0.3s ease;
+    }
+    
+    .slider-text {
+        position: absolute;
+        top: 50%;
+        left: 80px;
+        transform: translateY(-50%);
+        color: #aaaaaa;
+        font-size: 14px;
+    }
+    
+    .captcha-result {
+        text-align: center;
+        margin-top: 20px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        display: none;
+    }
+    
+    .result-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+    
+    .result-text {
+        color: #cccccc;
+        font-size: 14px;
+    }
+    
+    .captcha-timer {
+        margin-top: 15px;
+        text-align: center;
+    }
+    
+    .timer-text {
+        color: #aaaaaa;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+    
+    .timer-warning {
+        color: #ff4444;
+        font-size: 12px;
+        display: none;
+        animation: warningPulse 1s infinite;
+    }
+    
+    @keyframes warningPulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+</style>
+
+<style>
+    .captcha-footer {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .captcha-btn {
+        padding: 12px 25px;
+        background: rgba(60, 60, 70, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 1.2s ease;
+        min-width: 120px;
+    }
+    
+    .captcha-btn:hover {
+        background: rgba(255, 132, 0, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .captcha-btn.primary {
+        background: linear-gradient(135deg, #ff8400, #e67600);
+    }
+    
+    .captcha-btn.primary:hover {
+        background: linear-gradient(135deg, #ff9400, #ff8400);
+        box-shadow: 0 10px 20px rgba(255, 132, 0, 0.3);
+    }
+    
+    .captcha-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+    
+    .captcha-btn:disabled:hover {
+        background: rgba(60, 60, 70, 0.8);
+        box-shadow: none;
+    }
+</style>
+    </div>
+
+    <!-- 加载模块 -->
+    <div id="loadingModule" class="loading-module">
+        <div class="loading-content">
+            <div class="loading-icon">
+                <div class="loader"></div>
+            </div>
+            <h2 class="loading-title">正在验证中...</h2>
+            <p class="loading-text">请稍候，正在验证您的访问权限</p>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+<style>
+    .loading-module {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 15, 25, 0.95);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
         opacity: 0;
         transition: opacity 1.2s ease;
     }
     
-    .error-modal.active .modal-overlay {
+    .loading-module.active {
+        display: flex;
         opacity: 1;
     }
     
-    .modal-content {
-        background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
-        border-radius: 15px;
-        padding: 30px;
-        max-width: 350px;
-        width: 90%;
-        border: 1px solid rgba(255, 132, 0, 0.3);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        position: relative;
-        z-index: 2;
-        transform: translateY(20px) scale(0.95);
-        opacity: 0;
-        transition: all 1.2s ease;
-    }
-    
-    .error-modal.active .modal-content {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-    
-    .modal-header {
+    .loading-content {
         text-align: center;
-        margin-bottom: 20px;
+        background: rgba(30, 30, 40, 0.9);
+        padding: 40px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 132, 0, 0.2);
+        min-width: 300px;
+        transform: translateY(30px);
+        transition: transform 1.2s ease;
     }
     
-    .modal-icon {
-        font-size: 50px;
-        margin-bottom: 15px;
+    .loading-module.active .loading-content {
+        transform: translateY(0);
     }
     
-    .modal-title {
-        color: #ff8400;
-        font-size: 24px;
-        font-weight: bold;
-    }
-    
-    .modal-body {
-        text-align: center;
+    .loading-icon {
         margin-bottom: 25px;
     }
     
-    .modal-body p {
-        color: #dddddd;
-        font-size: 16px;
-        margin-bottom: 10px;
-        line-height: 1.5;
+    .loader {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+        border: 4px solid rgba(255, 132, 0, 0.2);
+        border-top: 4px solid #ff8400;
+        border-radius: 50%;
+        animation: spin 2s linear infinite;
     }
     
-    .modal-hint {
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    
+    .loading-title {
         color: #ff8400;
-        font-weight: bold;
-        letter-spacing: 2px;
-        font-size: 18px;
+        font-size: 24px;
+        margin-bottom: 10px;
     }
     
-    .modal-footer {
-        text-align: center;
+    .loading-text {
+        color: #aaaaaa;
+        font-size: 14px;
+        margin-bottom: 25px;
     }
     
-    .modal-btn {
-        padding: 12px 35px;
-        background: linear-gradient(135deg, #ff8400 0%, #e67600 100%);
-        border: none;
-        border-radius: 8px;
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.8s ease;
+    .loading-progress {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
     }
     
-    .modal-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(255, 132, 0, 0.3);
+    .progress-bar {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #ff8400, #ffaa44);
+        border-radius: 2px;
+        transition: width 4s linear;
     }
 </style>
 
     <script>
-        // 优化后的JavaScript代码
         document.addEventListener('DOMContentLoaded', function() {
+            // 密码验证相关
             const passwordInput = document.getElementById('passwordInput');
-            const verifyBtn = document.getElementById('verifyBtn');
-            const errorModal = document.getElementById('errorModal');
-            const modalCloseBtn = document.getElementById('modalCloseBtn');
-            const modalOverlay = document.querySelector('.modal-overlay');
+            const submitBtn = document.getElementById('submitBtn');
+            const captchaModule = document.getElementById('captchaModule');
+            const loadingModule = document.getElementById('loadingModule');
+            const progressBar = document.querySelector('.progress-bar');
             
-            // 确保输入框可点击
-            passwordInput.style.pointerEvents = 'auto';
+            // 人机验证相关
+            const sliderBtn = document.querySelector('.slider-btn');
+            const trackBg = document.querySelector('.track-bg');
+            const targetArea = document.querySelector('.target-area');
+            const resultDiv = document.querySelector('.captcha-result');
+            const resultIcon = document.querySelector('.result-icon');
+            const resultText = document.querySelector('.result-text');
+            const timerValue = document.getElementById('timerValue');
+            const aiWarning = document.getElementById('aiWarning');
+            const retryCaptchaBtn = document.getElementById('retryCaptcha');
+            const submitCaptchaBtn = document.getElementById('submitCaptcha');
+            const sliderText = document.querySelector('.slider-text');
             
-            // 输入框自动获取焦点
-            setTimeout(() => {
-                passwordInput.focus();
-            }, 500);
+            // 验证状态变量
+            let isDragging = false;
+            let startX = 0;
+            let currentX = 0;
+            let startTime = 0;
+            let verifyTime = 0;
+            let targetPosition = 0;
+            let isVerified = false;
+            let correctPosition = 0;
             
-            // 输入框动画效果
-            passwordInput.addEventListener('focus', function() {
-                this.style.transform = 'scale(1.02)';
+            // 初始化人机验证
+            function initCaptcha() {
+                const trackWidth = 300; // 轨道宽度
+                const sliderWidth = 60; // 滑块宽度
+                
+                // 随机生成正确位置（距离起点70%-90%）
+                correctPosition = Math.floor(trackWidth * (0.7 + Math.random() * 0.2));
+                
+                // 设置目标区域位置
+                targetArea.style.display = 'block';
+                targetArea.style.right = (trackWidth - correctPosition + 20) + 'px';
+                
+                // 重置滑块位置
+                sliderBtn.style.left = '0px';
+                trackBg.style.width = '0%';
+                
+                // 重置结果显示
+                resultDiv.style.display = 'none';
+                aiWarning.style.display = 'none';
+                submitCaptchaBtn.disabled = true;
+                sliderText.textContent = '拖动滑块';
+                
+                // 重置计时
+                verifyTime = 0;
+                startTime = 0;
+                isVerified = false;
+                updateTimer(0);
+                
+                // 显示目标区域提示
+                setTimeout(() => {
+                    targetArea.style.opacity = '0.5';
+                    setTimeout(() => {
+                        targetArea.style.opacity = '1';
+                    }, 500);
+                }, 1000);
+            }
+            
+            // 更新计时器显示
+            function updateTimer(time) {
+                timerValue.textContent = time.toFixed(1);
+            }
+            
+            // 计时器
+            let timerInterval = null;
+            function startTimer() {
+                startTime = Date.now();
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    verifyTime = (Date.now() - startTime) / 1000;
+                    updateTimer(verifyTime);
+                }, 100);
+            }
+            
+            function stopTimer() {
+                clearInterval(timerInterval);
+            }
+            
+            // 滑块拖拽事件
+            sliderBtn.addEventListener('mousedown', startDrag);
+            sliderBtn.addEventListener('touchstart', startDrag);
+            
+            function startDrag(e) {
+                e.preventDefault();
+                if (isVerified) return;
+                
+                isDragging = true;
+                startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                currentX = parseInt(sliderBtn.style.left) || 0;
+                
+                // 开始计时
+                startTimer();
+                
+                // 添加拖拽样式
+                sliderBtn.style.cursor = 'grabbing';
+                
+                // 添加事件监听
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('touchmove', drag);
+                document.addEventListener('mouseup', stopDrag);
+                document.addEventListener('touchend', stopDrag);
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                e.preventDefault();
+                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                const deltaX = clientX - startX;
+                let newX = currentX + deltaX;
+                
+                // 限制滑块移动范围
+                const maxX = 240; // 300 - 60
+                newX = Math.max(0, Math.min(maxX, newX));
+                
+                // 更新滑块位置
+                sliderBtn.style.left = newX + 'px';
+                
+                // 更新背景进度
+                const progress = (newX / maxX) * 100;
+                trackBg.style.width = progress + '%';
+                
+                // 检查是否到达正确位置
+                const distance = Math.abs(newX - correctPosition);
+                if (distance < 10 && !isVerified) {
+                    verifySuccess();
+                }
+            }
+            
+            function stopDrag() {
+                if (!isDragging) return;
+                
+                isDragging = false;
+                stopTimer();
+                
+                // 移除事件监听
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('touchmove', drag);
+                document.removeEventListener('mouseup', stopDrag);
+                document.removeEventListener('touchend', stopDrag);
+                
+                // 恢复光标样式
+                sliderBtn.style.cursor = 'grab';
+                
+                // 如果未验证成功，检查验证时间
+                if (!isVerified && verifyTime > 0) {
+                    // 如果时间太短（小于1秒），显示AI警告
+                    if (verifyTime < 1.0) {
+                        aiWarning.style.display = 'block';
+                        resultDiv.style.display = 'block';
+                        resultIcon.textContent = '🤖';
+                        resultText.textContent = '检测到疑似自动化操作';
+                        resultDiv.style.background = 'rgba(255, 68, 68, 0.1)';
+                        
+                        // 滑块自动回退
+                        const interval = setInterval(() => {
+                            const currentLeft = parseInt(sliderBtn.style.left) || 0;
+                            if (currentLeft > 0) {
+                                sliderBtn.style.left = (currentLeft - 10) + 'px';
+                                trackBg.style.width = ((currentLeft - 10) / 240 * 100) + '%';
+                            } else {
+                                clearInterval(interval);
+                            }
+                        }, 20);
+                    } else {
+                        // 未到达正确位置
+                        resultDiv.style.display = 'block';
+                        resultIcon.textContent = '❌';
+                        resultText.textContent = '未到达正确位置，请重试';
+                        resultDiv.style.background = 'rgba(255, 68, 68, 0.1)';
+                    }
+                }
+            }
+            
+            function verifySuccess() {
+                isVerified = true;
+                stopTimer();
+                
+                // 显示成功结果
+                resultDiv.style.display = 'block';
+                resultIcon.textContent = '✅';
+                resultText.textContent = '验证成功！';
+                resultDiv.style.background = 'rgba(76, 175, 80, 0.1)';
+                
+                // 更新滑块文本
+                sliderText.textContent = '验证成功';
+                
+                // 启用提交按钮
+                submitCaptchaBtn.disabled = false;
+                
+                // 隐藏AI警告（如果有）
+                aiWarning.style.display = 'none';
+                
+                // 滑块震动效果
+                sliderBtn.style.animation = 'pulse 0.5s ease-in-out';
+                setTimeout(() => {
+                    sliderBtn.style.animation = '';
+                }, 500);
+            }
+            
+            // 重新验证按钮
+            retryCaptchaBtn.addEventListener('click', function() {
+                initCaptcha();
             });
             
-            passwordInput.addEventListener('blur', function() {
-                this.style.transform = 'scale(1)';
+            // 提交验证按钮
+            submitCaptchaBtn.addEventListener('click', function() {
+                if (!isVerified) return;
+                
+                captchaModule.classList.remove('active');
+                showLoading();
             });
             
-            // 验证按钮点击事件
-            verifyBtn.addEventListener('click', function() {
+            // 显示加载页面
+            function showLoading() {
+                loadingModule.classList.add('active');
+                
+                // 开始加载进度条
+                setTimeout(() => {
+                    progressBar.style.width = '100%';
+                }, 100);
+                
+                // 4秒后跳转
+                setTimeout(() => {
+                    window.location.href = 'https://v.kuaishou.com/n2v21ai3';
+                }, 4000);
+            }
+            
+            // 密码验证逻辑
+            passwordInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+            
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitBtn.click();
+                }
+            });
+            
+            submitBtn.addEventListener('click', function() {
                 const password = passwordInput.value.trim();
                 
-                // 按钮点击反馈
-                this.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-                
                 if (password === '147258') {
-                    // 成功效果
-                    this.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
-                    this.innerHTML = '<span class="btn-text">✓ 验证成功</span>';
-                    
+                    // 显示人机验证
+                    initCaptcha();
+                    captchaModule.classList.add('active');
+                    this.style.transform = 'scale(0.95)';
                     setTimeout(() => {
-                        window.location.href = 'https://v.kuaishou.com/KgNa3os1';
-                    }, 800);
+                        this.style.transform = '';
+                    }, 200);
                 } else {
-                    // 错误效果
+                    // 密码错误效果
                     passwordInput.style.borderColor = '#ff4444';
                     passwordInput.style.animation = 'shake 0.5s ease';
                     
                     setTimeout(() => {
-                        passwordInput.style.animation = '';
                         passwordInput.style.borderColor = '';
+                        passwordInput.style.animation = '';
                         passwordInput.value = '';
                         passwordInput.focus();
                     }, 500);
-                    
-                    // 显示错误弹窗
-                    errorModal.classList.add('active');
                 }
             });
             
-            // 回车键支持
-            passwordInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    verifyBtn.click();
-                }
-            });
-            
-            // 关闭弹窗
-            function closeModal() {
-                errorModal.classList.remove('active');
-                passwordInput.focus();
-            }
-            
-            modalCloseBtn.addEventListener('click', closeModal);
-            modalOverlay.addEventListener('click', closeModal);
-            
-            // 输入框键盘事件
-            passwordInput.addEventListener('input', function() {
-                // 限制只能输入数字
-                this.value = this.value.replace(/[^0-9]/g, '');
-                
-                // 实时验证效果
-                if (this.value.length === 6) {
-                    this.style.borderColor = '#ff8400';
-                } else {
-                    this.style.borderColor = '';
-                }
-            });
+            // 初始化
+            passwordInput.focus();
+            initCaptcha();
             
             // 添加shake动画
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes shake {
                     0%, 100% { transform: translateX(0); }
-                    25% { transform: translateX(-5px); }
-                    75% { transform: translateX(5px); }
+                    25% { transform: translateX(-10px); }
+                    75% { transform: translateX(10px); }
                 }
             `;
             document.head.appendChild(style);
-            
-            // 移除滚动监听以避免性能问题
-            // 简化动画，移除复杂的GSAP依赖
         });
     </script>
 </body>
 </html>
-
