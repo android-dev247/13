@@ -3,87 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
-<title>代码编辑器</title>
+<title>全能代码编辑器</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-html,body{height:100%;background:#121212;color:#fff}
-.bar{display:flex;gap:8px;padding:10px;background:#1e1e1e}
-button{flex:1;padding:12px 6px;border:none;border-radius:6px;background:#4f46e5;color:#fff;font-size:16px}
-#code{width:100%;height:40vh;background:#1e1e1e;color:#fff;padding:12px;font-size:15px;resize:none;border:none;outline:none}
-#preview{width:100%;height:35vh;background:#fff;border:none}
-#log{height:15vh;background:#181818;padding:10px;font-size:13px;overflow-y:auto;color:#ddd}
-.success{color:#22c55e}
-.error{color:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif}
+html,body{height:100%;overflow:hidden;background:#111827;color:#f9fafb}
+.container{display:flex;flex-direction:column;height:100%}
+.toolbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px;background:#1f2937;border-bottom:1px solid #374151}
+button{padding:12px 8px;border:none;border-radius:8px;background:#4f46e5;color:white;font-weight:600;cursor:pointer}
+button:active{background:#4338ca}
+#code_area{flex:1;background:#1f2937;color:#f9fafb;border:none;outline:none;padding:12px;font-size:15px;line-height:1.6;resize:none;font-family:Consolas,Monaco,monospace}
+#preview_area{width:100%;height:36vh;background:#ffffff;border:none;border-top:1px solid #374151}
+#log_area{height:14vh;background:#111827;padding:10px;font-size:13px;line-height:1.4;overflow-y:auto;color:#e5e7eb;border-top:1px solid #374151}
+.log_success{color:#10b981}
+.log_error{color:#ef4444}
+.log_info{color:#60a5fa}
 </style>
 </head>
 <body>
-
-<div class="bar">
-  <button onclick="runCode()">运行</button>
-  <button onclick="clearCode()">清空</button>
-  <button onclick="saveFile()">保存</button>
+<div class="container">
+  <div class="toolbar">
+    <button id="run_btn">▶ 运行代码</button>
+    <button id="clear_btn">清空代码</button>
+    <button id="save_btn">💾 保存文件</button>
+  </div>
+  <textarea id="code_area" spellcheck="false"></textarea>
+  <iframe id="preview_area"></iframe>
+  <div id="log_area"></div>
 </div>
 
-<textarea id="code"></textarea>
-<iframe id="preview"></iframe>
-<div id="log"></div>
-
 <script>
-const code = document.getElementById('code');
-const preview = document.getElementById('preview');
-const log = document.getElementById('log');
+const code = document.getElementById('code_area');
+const preview = document.getElementById('preview_area');
+const log = document.getElementById('log_area');
+const runBtn = document.getElementById('run_btn');
+const clearBtn = document.getElementById('clear_btn');
+const saveBtn = document.getElementById('save_btn');
 
-function showLog(text, type){
-  let line = document.createElement('div');
-  line.className = type;
+let currentObjectURL = null;
+
+function showLog(text, type) {
+  const line = document.createElement('div');
+  line.className = 'log_' + type;
   line.textContent = text;
   log.appendChild(line);
   log.scrollTop = log.scrollHeight;
-}
-
-function runCode(){
-  log.innerHTML = '';
-  try {
-    let blob = new Blob([code.value], {type:'text/html'});
-    preview.src = URL.createObjectURL(blob);
-    showLog('运行成功','success');
-  }catch(e){
-    showLog('错误：'+e.message,'error');
+  if (log.children.length > 50) {
+    log.removeChild(log.firstChild);
   }
 }
 
-function clearCode(){
-  code.value = '';
+function clearLog() {
   log.innerHTML = '';
 }
 
-function saveFile(){
+function runCode() {
+  clearLog();
+  showLog('正在运行代码...', 'info');
   try {
-    let blob = new Blob([code.value], {type:'text/html'});
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement('a');
+    if (!code.value.trim()) {
+      throw new Error('代码内容不能为空');
+    }
+    if (currentObjectURL) {
+      URL.revokeObjectURL(currentObjectURL);
+      currentObjectURL = null;
+    }
+    const blob = new Blob([code.value], { type: 'text/html' });
+    currentObjectURL = URL.createObjectURL(blob);
+    preview.src = currentObjectURL;
+    showLog('✅ 代码运行成功', 'success');
+  } catch (err) {
+    showLog('❌ 错误：' + err.message, 'error');
+  }
+}
+
+function clearCode() {
+  if (code.value.trim() === '') {
+    showLog('ℹ️ 代码已经是空的', 'info');
+    return;
+  }
+  code.value = '';
+  clearLog();
+  preview.src = 'about:blank';
+  showLog('✅ 已清空所有代码', 'success');
+}
+
+function saveFile() {
+  try {
+    const content = code.value.trim();
+    if (!content) {
+      showLog('❌ 无法保存：代码为空', 'error');
+      return;
+    }
+    const blob = new Blob([content], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
     a.download = '我的网页.html';
     a.href = url;
     a.click();
-    setTimeout(()=>URL.revokeObjectURL(url), 500);
-    showLog('已保存：我的网页.html','success');
-  }catch(e){
-    showLog('保存失败：'+e.message,'error');
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+    showLog('✅ 文件已保存：我的网页.html', 'success');
+    showLog('💻 Windows：保存到桌面/下载', 'info');
+    showLog('📱 手机：保存到内部存储/下载', 'info');
+  } catch (e) {
+    showLog('❌ 保存失败：' + e.message, 'error');
   }
 }
 
-// 只给默认示例，不自动运行！
+runBtn.addEventListener('click', runCode);
+clearBtn.addEventListener('click', clearCode);
+saveBtn.addEventListener('click', saveFile);
+
 code.value = `<!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>我的网页</title>
+<style>
+body{
+  background: #f0f9ff;
+  font-family: Arial;
+  text-align: center;
+  padding: 30px;
+}
+h1{
+  color: #4f46e5;
+}
+</style>
 </head>
 <body>
-<h1>你好，世界</h1>
+<h1>欢迎使用代码编辑器</h1>
+<p>点击【运行】查看效果</p>
+<p>修改这里的代码，然后运行</p>
 </body>
 </html>`;
-</script>
 
+showLog('✅ 编辑器加载完成', 'success');
+showLog('ℹ️ 点击【运行】执行代码', 'info');
+showLog('ℹ️ 点击【保存】导出HTML到本地', 'info');
+</script>
 </body>
 </html>
